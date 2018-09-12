@@ -3,6 +3,7 @@
 #include "antlr4-runtime.h"
 #include "BrightScriptLexer.h"
 #include "BrightScriptParser.h"
+#include "BslintErrorStrategy.hpp"
 #include "cxxopts.hpp"
 
 using namespace antlr4;
@@ -17,7 +18,6 @@ int parseFiles(vector<string> paths)
 {
     for (const auto &path : paths)
     {
-        cout << path << endl;
         ifstream file_stream(path, ios::in | ios::binary);
         if (file_stream)
         {
@@ -25,17 +25,15 @@ int parseFiles(vector<string> paths)
             BrightScriptLexer lexer(&input);
             CommonTokenStream tokens(&lexer);
             BrightScriptParser parser(&tokens);
-            
-            tree::ParseTree *tree = parser.startRule();
+            parser.setErrorHandler(std::make_shared<BslintErrorStrategy>());
 
+            tree::ParseTree *tree = parser.startRule();
             file_stream.close();
         }
         else
         {
             throw(errno);
         }
-
-        // parser.removeErrorListeners();
     }
 }
 
