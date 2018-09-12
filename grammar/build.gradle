@@ -1,0 +1,59 @@
+apply plugin: 'cpp'
+apply plugin: 'antlr'
+
+sourceSets {
+    main {
+        antlr {
+            srcDirs = ['src/main/antlr']
+        }
+    }
+}
+
+model { 
+    components {
+        grammar(NativeLibrarySpec) {
+            sources {
+                cpp {
+                    source {
+                        srcDirs "build/generated/cpp/"
+                        include "**/*.cpp"
+                    }
+                    exportedHeaders {
+                        srcDirs "build/generated/cpp/parser"
+                        include "**/*.h"
+                    }
+                    lib project: ':antlr', library: 'antlr'
+                }
+            }
+            binaries.all {
+                cppCompiler.args '-std=c++11', '-Wall', '-stdlib=libc++'
+                linker.args '-std=c++11'
+            }
+        }
+    }
+}
+
+generateGrammarSource {
+    outputDirectory = file('build/generated/cpp/parser') 
+    arguments += ['-visitor', '-Dlanguage=Cpp', '-long-messages']
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    antlr('org.antlr:antlr4:4.7')
+}
+
+afterEvaluate {
+    for(def task in it.tasks) {
+        // We need to make sure that sources are generated
+        // before attempting to produce any artifacts
+        // Without this - the main exec tries to build in parallel 
+        // before sources are generated
+        if(task != generateGrammarSource){
+            task.dependsOn generateGrammarSource
+        }
+    }
+}

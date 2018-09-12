@@ -1,0 +1,22 @@
+apply plugin : 'cpp' 
+apply plugin: 'xcode'
+ 
+model {
+    components {
+        main(NativeExecutableSpec) {
+            sources {
+                cpp {
+                    exportedHeaders {
+                        srcDir "src/main/include"
+                    }
+                    lib project: ':grammar', library: 'grammar', linkage: 'static'
+                    lib project: ':antlr', library: 'antlr', linkage: 'static'
+                }
+            }
+            binaries.all {
+                cppCompiler.args '-std=c++11', '-stdlib=libc++'
+                linker.args '-std=c++11'
+            }
+        }
+    }
+}

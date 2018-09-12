@@ -1,0 +1,25 @@
+apply plugin : 'cpp' 
+apply plugin: 'xcode'
+ 
+model { 
+    components {
+        antlr(NativeLibrarySpec) {
+            sources {
+                cpp {
+                    source {
+                        srcDirs "src/main/cpp"
+                        include "**/*.cpp"
+                    }
+                    exportedHeaders {
+                        srcDirs "src/main/cpp"
+                        include "**/*.h"
+                    }
+                }
+            }
+            binaries.all {
+                cppCompiler.args '-std=c++11', '-Wall', '-stdlib=libc++'
+                linker.args '-std=c++11'
+            }
+        }
+    }
+}
