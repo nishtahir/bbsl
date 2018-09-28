@@ -39,6 +39,7 @@
         "__split_buffer": "cpp",
         "__tree": "cpp",
         "list": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "fstream": "cpp"
     }
 }

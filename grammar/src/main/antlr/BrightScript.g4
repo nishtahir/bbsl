@@ -5,35 +5,21 @@ startRule
     ;
 
 component
-    : componentHead* componentBody
+    : componentHead* componentBody*
     ;
 
 componentHead
-    : endOfLine* componentHeadElement (endOfLine+ componentHeadElement)* endOfLine*
-    ;
-
-componentHeadElement
     : libraryStatement
     | conditionalCompilationStatement
-    | comment
-    | componentBody
     ;
 
 componentBody
-    : endOfLine* componentBodyElement (endOfLine+ componentBodyElement)* endOfLine*
-    ;
-
-componentBodyElement
     : functionDeclaration
     | subDeclaration
     ;
 
 block
-    : blockStatement (endOfStatement blockStatement)* endOfStatement+
-    ;
-
-blockStatement
-    : comment
+    : assignmentStatmenet
     | conditionalCompilationStatement
     | dimStatement
     | exitStatement
@@ -51,46 +37,48 @@ blockStatement
     | expression
     ;
 
-arrayInitializer
-    : OPEN_BRACKET NEWLINE* ((expression | arrayInitializer | associativeArrayInitializer) ((COMMA | endOfLine) NEWLINE* (expression | arrayInitializer | associativeArrayInitializer))*)? NEWLINE* CLOSE_BRACKET
+assignmentStatmenet
+    : identifier EQUALS assignableExpression
     ;
 
+arrayInitializer
+    : OPEN_BRACKET (arrayElement (COMMA arrayElement)*)? CLOSE_BRACKET
+    ;
+
+arrayElement
+    : expression
+    | arrayInitializer
+    | associativeArrayInitializer;
+
 associativeArrayInitializer
-    : OPEN_BRACE NEWLINE* (associativeElementInitializer ((COMMA | endOfLine) NEWLINE* associativeElementInitializer)*)? COMMA? NEWLINE* CLOSE_BRACE
+    : OPEN_BRACE (associativeElementInitializer (COMMA associativeElementInitializer)*)?  CLOSE_BRACE
     ;
 
 associativeElementInitializer
-    : (identifier | reservedWord | stringLiteral) COLON assignableExpression
+    : (identifier | stringLiteral) COLON assignableExpression
     ;
 
 conditionalCompilationStatement
-    : conditionalCompilationConstStatement
-    | conditionalCompilationErrorStatement
-    | conditionalCompilationIfThenElseStatement
-    ;
-
-conditionalCompilationConstStatement
     : CONDITIONAL_CONST untypedIdentifier EQUALS expression
-    ;
-
-conditionalCompilationErrorStatement
-    : CONDITIONAL_ERROR .*?
-    ;
-
-conditionalCompilationIfThenElseStatement
-    : conditionalCompilationIfBlockStatement conditionalCompilationIfElseIfBlockStatement* conditionalCompilationIfElseBlockStatement? CONDITIONAL_ENDIF
+    | CONDITIONAL_ERROR .*?
+    | conditionalCompilationIfBlockStatement conditionalCompilationIfElseIfBlockStatement* conditionalCompilationIfElseBlockStatement? CONDITIONAL_ENDIF
     ;
 
 conditionalCompilationIfBlockStatement
-    : CONDITIONAL_IF expression THEN? endOfStatement+ (block+ | componentBody+)*
+    : CONDITIONAL_IF expression THEN? conditionalCompilationBlock*
     ;
 
 conditionalCompilationIfElseIfBlockStatement
-    : CONDITIONAL_ELSEIF expression THEN? endOfStatement+ (block+ | componentBody+)*
+    : CONDITIONAL_ELSEIF expression THEN? conditionalCompilationBlock*
     ;
 
 conditionalCompilationIfElseBlockStatement
-    : CONDITIONAL_ELSE endOfStatement+ (block+ | componentBody+)*
+    : CONDITIONAL_ELSE conditionalCompilationBlock*
+    ;
+
+conditionalCompilationBlock
+    : block
+    | componentBody
     ;
 
 dimStatement
@@ -108,11 +96,11 @@ exitStatement
     ;
 
 forStatement
-    : FOR identifier EQUALS expression TO expression (STEP expression)? endOfStatement+ block* nextStatement? (END FOR)?
+    : FOR identifier EQUALS expression TO expression (STEP expression)? block* nextStatement? (END FOR)?
     ;
 
 forEachStatement
-    : FOR EACH identifier IN expression endOfStatement+ block* nextStatement? (END FOR)?
+    : FOR EACH identifier IN expression block* (nextStatement | END FOR)
     ;
 
 gotoStatement
@@ -120,24 +108,28 @@ gotoStatement
     ;
 
 ifThenElseStatement
-    : ifSingleLineStatement
-    | ifBlockStatement ifElseIfBlockStatement* ifElseBlockStatement? (END IF | ENDIF)
+    : IF expression THEN? block* (ELSEIF block*)* (ELSE block)? END IF
     ;
 
+//ifThenElseStatement
+//    : ifSingleLineStatement
+//    | ifBlockStatement ifElseIfBlockStatement* ifElseBlockStatement? (END IF | ENDIF)
+//    ;
+
 ifSingleLineStatement
-    : IF expression THEN? blockStatement (ELSE blockStatement)?
+    :
     ;
 
 ifBlockStatement
-    : IF expression THEN? endOfStatement+ block*
+    : IF expression THEN? block*
     ;
 
 ifElseIfBlockStatement
-    : (ELSE IF | ELSEIF) expression THEN? endOfStatement+ block*
+    : (ELSE IF | ) expression THEN? block*
     ;
 
 ifElseBlockStatement
-    : ELSE endOfStatement+ block*
+    : ELSE block
     ;
 
 labelStatement
@@ -153,7 +145,7 @@ nextStatement
     ;
 
 printStatement
-    : (PRINT | QUESTION_MARK) (expression (SEMICOLON? expression)* SEMICOLON?)?
+    : PRINT expression (SEMICOLON expression)*
     ;
 
 returnStatement
@@ -165,23 +157,23 @@ stopStatement
     ;
 
 whileStatement
-    : WHILE expression endOfStatement+ block* (ENDWHILE | END WHILE)
+    : WHILE expression block* ENDWHILE
     ;
 
 anonymousFunctionDeclaration
-    : FUNCTION parameterList? (AS baseType)? endOfStatement+ block* (ENDFUNCTION | END FUNCTION)
+    : FUNCTION parameterList? (AS baseType)? block* (ENDFUNCTION | END FUNCTION)
     ;
 
 functionDeclaration
-    : FUNCTION untypedIdentifier parameterList? (AS baseType)? endOfStatement+ block* (ENDFUNCTION | END FUNCTION)
+    : FUNCTION untypedIdentifier parameterList? (AS baseType)? block* (ENDFUNCTION | END FUNCTION)
     ;
 
 anonymousSubDeclaration
-    : SUB parameterList? endOfStatement+ block* (ENDSUB | END SUB)
+    : SUB parameterList? block* (ENDSUB | END SUB)
     ;
 
 subDeclaration
-    : SUB untypedIdentifier parameterList? endOfStatement+ block* (ENDSUB | END SUB)
+    : SUB untypedIdentifier parameterList? block* (ENDSUB | END SUB)
     ;
 
 parameterList
@@ -210,40 +202,35 @@ expressionList
 
 expression
     : primary
-    | globalFunctionInvocation
-    | expression (DOT | ATTRIBUTE_OPERATOR) (identifier | reservedWord)
-    | expression OPEN_BRACKET expression CLOSE_BRACKET
-    | expression OPEN_PARENTHESIS expressionList? CLOSE_PARENTHESIS
-    | (ADD|SUBTRACT) expression
-    | expression (INCREMENT|DECREMENT)
-    | expression (MULTIPLY|DIVIDE|MOD|DIVIDE_INTEGER) expression
-    | expression (ADD|SUBTRACT) expression
-    | expression (BITSHIFT_LEFT|BITSHIFT_RIGHT) expression
-    | expression (GREATER_THAN|LESS_THAN|EQUALS|NOT_EQUAL|GREATER_THAN_OR_EQUAL|LESS_THAN_OR_EQUAL) expression
     | NOT expression
-    | expression (AND|OR) expression
-    | <assoc=right> expression (EQUALS|ASSIGNMENT_ADD|ASSIGNMENT_SUBTRACT|ASSIGNMENT_MULTIPLY|ASSIGNMENT_DIVIDE|ASSIGNMENT_DIVIDE_INTEGER|ASSIGNMENT_BITSHIFT_LEFT|ASSIGNMENT_BITSHIFT_RIGHT) assignableExpression
-    ;
-
-globalFunctionInvocation
-    : globalFunction OPEN_PARENTHESIS expressionList? CLOSE_PARENTHESIS
-    ;
-
-globalFunction
-    : CREATEOBJECT
-    | EVAL
-    | GETLASTRUNCOMPILEERROR
-    | GETGLOBALAA
-    | GETLASTRUNRUNTIMEERROR
-    | RUN
-    | STRING
-    | TAB
-    | TYPE
+    | ADD expression
+    | SUBTRACT expression
+    | OPEN_PARENTHESIS expression CLOSE_PARENTHESIS
+    | expression OPEN_PARENTHESIS expressionList? CLOSE_PARENTHESIS
+    | expression DOT expression
+    | expression ATTRIBUTE_OPERATOR expression
+    | expression INCREMENT
+    | expression DECREMENT
+    | expression MULTIPLY expression
+    | expression DIVIDE expression
+    | expression MOD expression
+    | expression DIVIDE_INTEGER expression
+    | expression ADD expression
+    | expression SUBTRACT expression
+    | expression BITSHIFT_LEFT expression
+    | expression BITSHIFT_RIGHT expression
+    | expression GREATER_THAN expression
+    | expression LESS_THAN expression
+    | expression EQUALS expression
+    | expression NOT_EQUAL expression
+    | expression GREATER_THAN_OR_EQUAL expression
+    | expression LESS_THAN_OR_EQUAL expression
+    | expression AND expression
+    | expression OR expression
     ;
 
 primary
-    : OPEN_PARENTHESIS expression CLOSE_PARENTHESIS
-    | literal
+    : literal
     | identifier
     ;
 
@@ -255,11 +242,11 @@ literal
     ;
 
 assignableExpression
-    : expression
-    | arrayInitializer
+    : arrayInitializer
     | associativeArrayInitializer
     | anonymousFunctionDeclaration
     | anonymousSubDeclaration
+    | expression
     ;
 
 numberLiteral
@@ -291,7 +278,7 @@ untypedIdentifier
 reservedWord
     : AND
     | BOX
-    | CREATEOBJECT
+//    | CREATEOBJECT
     | DIM
     | EACH
     | ELSE
@@ -301,7 +288,7 @@ reservedWord
     | ENDIF
     | ENDSUB
     | ENDWHILE
-    | EVAL
+//    | EVAL
     | EXIT
     | EXITWHILE
     | FALSE
@@ -323,7 +310,7 @@ reservedWord
     | PRINT
     | REM
     | RETURN
-    | RUN
+//    | RUN
     | STEP
     | STOP
     | SUB
@@ -331,20 +318,8 @@ reservedWord
     | THEN
     | TO
     | TRUE
-    | TYPE
+//    | TYPE
     | WHILE
-    ;
-
-comment
-    : COMMENT
-    ;
-
-endOfLine
-    : (NEWLINE | comment) NEWLINE*
-    ;
-
-endOfStatement
-    : (endOfLine | COLON) NEWLINE*
     ;
 
 AND
@@ -362,9 +337,9 @@ BOX
     : B O X
 	;
 
-CREATEOBJECT
-    : C R E A T E O B J E C T
-    ;
+//CREATEOBJECT
+//    : C R E A T E O B J E C T
+//    ;
 
 DIM
     : D I M
@@ -418,9 +393,9 @@ EXITWHILE
     : E X I T W H I L E
 	;
 
-EVAL
-    : E V A L
-    ;
+//EVAL
+//    : E V A L
+//    ;
 
 FALSE
     : F A L S E
@@ -526,9 +501,9 @@ RETURN
     : R E T U R N
 	;
 
-RUN
-    : R U N
-    ;
+//RUN
+//    : R U N
+//    ;
 
 STEP
     : S T E P
@@ -566,9 +541,9 @@ VOID
     : V O I D
     ;
 
-TYPE
-    : T Y P E
-    ;
+//TYPE
+//    : T Y P E
+//    ;
 
 WHILE
     : W H I L E
@@ -596,15 +571,11 @@ IDENTIFIER_TYPE_DECLARATION
     ;
 
 COMMENT
-    : (SINGLE_QUOTE | (REM (WS | NEWLINE))) ~[\r\n\u2028\u2029]* -> channel(HIDDEN)
-    ;
-
-NEWLINE
-    : [\r\n\u2028\u2029]+
+    : (SINGLE_QUOTE | (REM (WS))) ~[\r\n\u2028\u2029]* -> channel(HIDDEN)
     ;
 
 WS
-    : [ \t]+ -> skip
+    : [ \t\r\n\u2028\u2029]+ -> skip
     ;
 
 CONDITIONAL_CONST

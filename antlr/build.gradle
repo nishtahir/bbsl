@@ -1,7 +1,11 @@
-apply plugin : 'cpp' 
+apply plugin: 'cpp' 
 apply plugin: 'xcode'
  
 model { 
+    buildTypes {
+        debug
+        release
+    }
     components {
         antlr(NativeLibrarySpec) {
             sources {

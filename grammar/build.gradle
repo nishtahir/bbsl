@@ -10,6 +10,10 @@ sourceSets {
 }
 
 model { 
+    buildTypes {
+        debug
+        release
+    }
     components {
         grammar(NativeLibrarySpec) {
             sources {
@@ -28,6 +32,9 @@ model {
             binaries.all {
                 cppCompiler.args '-std=c++11', '-Wall', '-stdlib=libc++'
                 linker.args '-std=c++11'
+                if( buildType == buildTypes.release) {
+                    cppCompiler.args '-O3'
+                }
             }
         }
     }

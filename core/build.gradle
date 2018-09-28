@@ -1,22 +1,44 @@
-apply plugin : 'cpp' 
+apply plugin: 'cpp' 
 apply plugin: 'xcode'
+apply plugin: 'cpp-unit-test'
  
 model {
+    buildTypes {
+        debug
+        release
+    }
     components {
         main(NativeExecutableSpec) {
             sources {
                 cpp {
                     exportedHeaders {
-                        srcDir "src/main/include"
+                        srcDir 'src/main/headers'
                     }
                     lib project: ':grammar', library: 'grammar', linkage: 'static'
                     lib project: ':antlr', library: 'antlr', linkage: 'static'
                 }
             }
             binaries.all {
-                cppCompiler.args '-std=c++11', '-stdlib=libc++'
+                cppCompiler.args '-std=c++11', '-stdlib=libc++', '-Wall', '-Wextra', 
+                                 '-Wshadow', '-Wnon-virtual-dtor', '-pedantic'
                 linker.args '-std=c++11'
+
+                if(buildTypes.release) {
+                    cppCompiler.args '-O3'
+                }
             }
+        }
+    }
+}
+
+unitTest {
+    dependencies {
+        implementation project(':googletest')
+    }
+
+    binaries.whenElementKnown(CppTestExecutable) { binary ->
+        if (binary.targetPlatform.operatingSystem.linux) {
+            binary.linkTask.get().linkerArgs.add('-pthread')
         }
     }
 }

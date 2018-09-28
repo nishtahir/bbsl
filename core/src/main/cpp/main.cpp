@@ -1,18 +1,19 @@
 #include <iostream>
-
 #include "antlr4-runtime.h"
 #include "BrightScriptLexer.h"
 #include "BrightScriptParser.h"
-#include "BslintErrorStrategy.hpp"
-#include "cxxopts.hpp"
+#include "Recognizer.h"
 
-using namespace antlr4;
-using namespace std;
-using namespace cxxopts;
+#include "cxxopts.hpp"
+#include "BslintErrorStrategy.hpp"
 
 #include <fstream>
 #include <string>
 #include <cerrno>
+
+using namespace antlr4;
+using namespace std;
+using namespace cxxopts;
 
 int parseFiles(vector<string> paths)
 {
@@ -25,9 +26,11 @@ int parseFiles(vector<string> paths)
             BrightScriptLexer lexer(&input);
             CommonTokenStream tokens(&lexer);
             BrightScriptParser parser(&tokens);
+            auto interpreter = parser.getInterpreter<atn::ParserATNSimulator>();
+            // interpreter->setPredictionMode(atn::PredictionMode::SLL);
             parser.setErrorHandler(std::make_shared<BslintErrorStrategy>());
-
-            tree::ParseTree *tree = parser.startRule();
+            parser.setBuildParseTree(false);
+            parser.startRule();
             file_stream.close();
         }
         else
