@@ -1,7 +1,6 @@
-apply plugin: 'cpp' 
+apply plugin: 'cpp'
 apply plugin: 'xcode'
-apply plugin: 'cpp-unit-test'
- 
+
 model {
     buildTypes {
         debug
@@ -19,26 +18,14 @@ model {
                 }
             }
             binaries.all {
-                cppCompiler.args '-std=c++11', '-stdlib=libc++', '-Wall', '-Wextra', 
-                                 '-Wshadow', '-Wnon-virtual-dtor', '-pedantic'
+                cppCompiler.args '-std=c++11', '-stdlib=libc++', '-Wall', '-Wextra',
+                    '-Wshadow', '-Wnon-virtual-dtor', '-pedantic'
                 linker.args '-std=c++11'
 
-                if(buildTypes.release) {
+                if (buildTypes.release) {
                     cppCompiler.args '-O3'
                 }
             }
-        }
-    }
-}
-
-unitTest {
-    dependencies {
-        implementation project(':googletest')
-    }
-
-    binaries.whenElementKnown(CppTestExecutable) { binary ->
-        if (binary.targetPlatform.operatingSystem.linux) {
-            binary.linkTask.get().linkerArgs.add('-pthread')
         }
     }
 }
