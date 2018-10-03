@@ -15,7 +15,7 @@ using namespace antlr4;
 using namespace std;
 using namespace cxxopts;
 
-int parseFiles(vector<string> paths)
+void parseFiles(vector<string> paths)
 {
     for (const auto &path : paths)
     {
