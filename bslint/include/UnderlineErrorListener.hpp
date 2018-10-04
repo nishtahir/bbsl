@@ -8,6 +8,7 @@
 #include "IntStream.h"
 #include "antlr4-runtime.h"
 #include "StringUtils.hpp"
+#include "rang.hpp"
 
 class UnderlineErrorListener : public antlr4::BaseErrorListener
 {
@@ -23,8 +24,8 @@ class UnderlineErrorListener : public antlr4::BaseErrorListener
 
         auto input_stream = recognizer->getInputStream();
         auto file_name = input_stream->getSourceName();
-        std::cerr << file_name << ":" << line << ":" << charPositionInLine << ":"
-                  << "error: " << msg << std::endl;
+
+        print_err(file_name, line, charPositionInLine, msg);
 
         if (antlr4::CommonTokenStream *tokenStream = dynamic_cast<antlr4::CommonTokenStream *>(input_stream))
         {
@@ -45,8 +46,17 @@ class UnderlineErrorListener : public antlr4::BaseErrorListener
             {
                 right_pad(underline, size, '^');
             }
-            std::cerr << underline << std::endl;
+            std::cerr << rang::fg::red << underline << rang::style::reset << std::endl;
         }
+    }
+
+    void print_err(const std::string &path, int line, int column, const std::string &msg)
+    {
+        std::cerr << rang::style::bold
+                  << path << ":" << line << ":" << column << ":"
+                  << rang::fg::red << "error"
+                  << rang::style::reset << ": " << msg
+                  << std::endl;
     }
 };
 

@@ -21,6 +21,7 @@ protected:
     {
       auto display_name = recognizer->getVocabulary().getDisplayName(*item);
       to_lower(display_name);
+      replace(display_name, '_', ' ');
 
       expected_tokens += display_name;
       if (item != tokens.end() - 1)
