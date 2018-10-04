@@ -1,4 +1,8 @@
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <cerrno>
+
 #include "antlr4-runtime.h"
 #include "BrightScriptLexer.h"
 #include "BrightScriptParser.h"
@@ -6,10 +10,7 @@
 
 #include "cxxopts.hpp"
 #include "BslintErrorStrategy.hpp"
-
-#include <fstream>
-#include <string>
-#include <cerrno>
+#include "UnderlineErrorListener.hpp"
 
 using namespace antlr4;
 using namespace std;
@@ -19,24 +20,21 @@ void parseFiles(vector<string> paths)
 {
     for (const auto &path : paths)
     {
-        ifstream file_stream(path, ios::in | ios::binary);
-        if (file_stream)
-        {
-            ANTLRInputStream input(file_stream);
-            BrightScriptLexer lexer(&input);
-            CommonTokenStream tokens(&lexer);
-            BrightScriptParser parser(&tokens);
-            auto interpreter = parser.getInterpreter<atn::ParserATNSimulator>();
-            // interpreter->setPredictionMode(atn::PredictionMode::SLL);
-            parser.setErrorHandler(std::make_shared<BslintErrorStrategy>());
-            parser.setBuildParseTree(false);
-            parser.startRule();
-            file_stream.close();
-        }
-        else
-        {
-            throw(errno);
-        }
+        ANTLRFileStream input(path);
+        BrightScriptLexer lexer(&input);
+        CommonTokenStream tokens(&lexer);
+
+        BrightScriptParser parser(&tokens);
+        parser.removeErrorListeners();
+        auto err_listener = UnderlineErrorListener();
+
+        parser.addErrorListener(&err_listener);
+
+        auto interpreter = parser.getInterpreter<atn::ParserATNSimulator>();
+        // interpreter->setPredictionMode(atn::PredictionMode::SLL);
+        parser.setErrorHandler(make_shared<BslintErrorStrategy>());
+        parser.setBuildParseTree(false);
+        parser.startRule();
     }
 }
 
