@@ -3,14 +3,15 @@
 
 #include <iostream>
 
+#include "antlr4-runtime.h"
 #include "BaseErrorListener.h"
 #include "Recognizer.h"
 #include "IntStream.h"
-#include "antlr4-runtime.h"
-#include "StringUtils.hpp"
 #include "rang.hpp"
 
-class UnderlineErrorListener : public antlr4::BaseErrorListener
+#include "string_utils.hpp"
+
+class TerminalErrorListener : public antlr4::BaseErrorListener
 {
 
   protected:

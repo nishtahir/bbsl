@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
 project(bslint)
-include_directories(${PROJECT_SOURCE_DIR}/include)
-
+include_directories(
+  ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_SOURCE_DIR}/lib
+)
 
 file(GLOB_RECURSE _HDRS 
     "${PROJECT_SOURCE_DIR}/include/*.h"
     "${PROJECT_SOURCE_DIR}/include/*.hpp"
+    "${PROJECT_SOURCE_DIR}/lib/*.h"
+    "${PROJECT_SOURCE_DIR}/lib/*.hpp"
 )
 
 file(GLOB_RECURSE _SRCS "${PROJECT_SOURCE_DIR}/src/*.cpp")

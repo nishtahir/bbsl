@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <cerrno>
+#include <regex>
 
 #include "antlr4-runtime.h"
 #include "BrightScriptLexer.h"
@@ -9,32 +10,40 @@
 #include "Recognizer.h"
 
 #include "cxxopts.hpp"
-#include "BslintErrorStrategy.hpp"
-#include "UnderlineErrorListener.hpp"
+#include "terminal_error_strategy.hpp"
+#include "terminal_error_listener.hpp"
+#include "tree_utils.hpp"
 
 using namespace antlr4;
 using namespace std;
 using namespace cxxopts;
 
-void parseFiles(vector<string> paths)
+void parseFiles(vector<string> paths, bool print_parse_tree = false, bool report_errors = true)
 {
     for (const auto &path : paths)
     {
         ANTLRFileStream input(path);
         BrightScriptLexer lexer(&input);
         CommonTokenStream tokens(&lexer);
-
         BrightScriptParser parser(&tokens);
-        parser.removeErrorListeners();
-        auto err_listener = UnderlineErrorListener();
 
-        parser.addErrorListener(&err_listener);
+        parser.removeErrorListeners();
+
+        if (report_errors)
+        {
+            auto err_listener = TerminalErrorListener();
+            parser.addErrorListener(&err_listener);
+            parser.setErrorHandler(make_shared<TerminalErrorStrategy>());
+        }
 
         auto interpreter = parser.getInterpreter<atn::ParserATNSimulator>();
         // interpreter->setPredictionMode(atn::PredictionMode::SLL);
-        parser.setErrorHandler(make_shared<BslintErrorStrategy>());
-        parser.setBuildParseTree(false);
-        parser.startRule();
+        auto tree = parser.startRule();
+
+        if (print_parse_tree)
+        {
+            std::cout << to_json(tree, &parser) << std::endl;
+        }
     }
 }
 
@@ -46,6 +55,8 @@ int main(int argc, char **argv)
         auto options_adder = options.add_options();
         options_adder("v,verbose", "Show verbose output", value<bool>());
         options_adder("h,help", "Print help");
+        options_adder("print-tree", "Print parse tree");
+        options_adder("no-lint", "Disable error reporting");
         options_adder("sources", "Source files", value<vector<string>>());
 
         options.parse_positional("sources");
@@ -62,7 +73,11 @@ int main(int argc, char **argv)
         if (parse_result.count("sources"))
         {
             auto &files = parse_result["sources"].as<vector<string>>();
-            parseFiles(files);
+            
+            auto report_errors = !parse_result.count("no-lint");
+            auto print_tree = parse_result.count("print-tree");
+
+            parseFiles(files, print_tree, report_errors);
         }
         else
         {

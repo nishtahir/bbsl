@@ -1,6 +1,6 @@
 # Bslint
 
-A pure C++ implmementation of the Wist Brightscript linting engine. 
+An opinionated anti-bikeshedding linter for the BrightScript programming language.
 
 # Requirements
 

@@ -1,9 +1,10 @@
 #ifndef __BSLINT_ERROR_STRATEGY_H__
 #define __BSLINT_ERROR_STRATEGY_H__
-#include "DefaultErrorStrategy.h"
-#include "StringUtils.hpp"
 
-class BslintErrorStrategy : public antlr4::DefaultErrorStrategy
+#include "DefaultErrorStrategy.h"
+#include "string_utils.hpp"
+
+class TerminalErrorStrategy : public antlr4::DefaultErrorStrategy
 {
 protected:
   virtual void reportNoViableAlternative(antlr4::Parser *recognizer, const antlr4::NoViableAltException &e)
