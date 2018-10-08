@@ -234,8 +234,8 @@ stringLiteral
     ;
 
 booleanLiteral
-    :  TRUE
-    |  FALSE
+    :  BOOLEAN_TRUE
+    |  BOOLEAN_FALSE
     ;
 
 invalidLiteral
@@ -264,7 +264,7 @@ reservedWord
     | ENDWHILE
     | EXIT
     | EXITWHILE
-    | FALSE
+    | BOOLEAN_FALSE
     | FOR
     | FUNCTION
     | GOTO
@@ -286,7 +286,7 @@ reservedWord
     | TAB
     | THEN
     | TO
-    | TRUE
+    | BOOLEAN_TRUE
     | WHILE
     ;
 
@@ -357,7 +357,7 @@ EXITWHILE
     : E X I T W H I L E
 	;
 
-FALSE
+BOOLEAN_FALSE
     : F A L S E
 	;
 
@@ -477,7 +477,7 @@ TO
     : T O
 	;
 
-TRUE
+BOOLEAN_TRUE
     : T R U E
 	;
 

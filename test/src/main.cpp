@@ -7,8 +7,8 @@
 #include <cerrno>
 
 #include "antlr4-runtime.h"
-// #include "BrightScriptLexer.h"
-// #include "BrightScriptParser.h"
+#include "BrightScriptLexer.h"
+#include "BrightScriptParser.h"
 #include "Recognizer.h"
 
 using namespace std;
@@ -27,14 +27,14 @@ TEST_CASE("Factorials are computed", "[factorial]")
     REQUIRE(Factorial(10) == 3628800);
 }
 
-// tree::ParseTree *build_parse_tree(string path)
-// {
-//     ANTLRFileStream input(path);
-//     BrightScriptLexer lexer(&input);
-//     CommonTokenStream tokens(&lexer);
-//     BrightScriptParser parser(&tokens);
-//     return parser.startRule();
-// }
+tree::ParseTree *build_parse_tree(string path)
+{
+    ANTLRFileStream input(path);
+    BrightScriptLexer lexer(&input);
+    CommonTokenStream tokens(&lexer);
+    BrightScriptParser parser(&tokens);
+    return parser.startRule();
+}
 
 // string stringfy_parse_tree(vector<string> parse_tree, ParserRuleContext *ctx, int indent_level = 0)
 // {
