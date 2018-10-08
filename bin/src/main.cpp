@@ -27,8 +27,9 @@ void parseFiles(vector<string> paths, bool print_parse_tree = false, bool report
         CommonTokenStream tokens(&lexer);
         BrightScriptParser parser(&tokens);
 
-        antlr4::ParserRuleContext *tree;
+        parser.removeErrorListeners();
 
+        antlr4::ParserRuleContext *tree;
         try
         {
             parser.setErrorHandler(make_shared<BailErrorStrategy>());
@@ -36,7 +37,7 @@ void parseFiles(vector<string> paths, bool print_parse_tree = false, bool report
             interpreter->setPredictionMode(atn::PredictionMode::SLL);
             tree = parser.startRule();
         }
-        catch (ParseCancellationException e)
+        catch (ParseCancellationException &)
         {
             if (report_errors)
             {
@@ -45,13 +46,13 @@ void parseFiles(vector<string> paths, bool print_parse_tree = false, bool report
                 interpreter->setPredictionMode(atn::PredictionMode::LL);
 
                 auto err_listener = TerminalErrorListener();
-                parser.removeErrorListeners();
                 parser.addErrorListener(&err_listener);
                 parser.setErrorHandler(make_shared<TerminalErrorStrategy>());
+                tree = parser.startRule();
             }
         }
 
-        if (print_parse_tree)
+        if (print_parse_tree && tree != nullptr)
         {
             std::cout << to_json(tree, &parser) << std::endl;
         }
