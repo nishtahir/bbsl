@@ -9,6 +9,7 @@
 #include "BrightScriptParser.h"
 #include "Recognizer.h"
 
+#include "file_utils.hpp"
 #include "cxxopts.hpp"
 #include "terminal_error_strategy.hpp"
 #include "terminal_error_listener.hpp"
@@ -22,6 +23,13 @@ void parseFiles(vector<string> paths, bool print_parse_tree = false, bool report
 {
     for (const auto &path : paths)
     {
+
+        if (!file_exists(path))
+        {
+            cerr << "File not found for '" + path + "'" << endl;
+            continue;
+        }
+
         ANTLRFileStream input(path);
         BrightScriptLexer lexer(&input);
         CommonTokenStream tokens(&lexer);

@@ -35,13 +35,3 @@ tree::ParseTree *build_parse_tree(string path)
     BrightScriptParser parser(&tokens);
     return parser.startRule();
 }
-
-// string stringfy_parse_tree(vector<string> parse_tree, ParserRuleContext *ctx, int indent_level = 0)
-// {
-//     if (auto *node = dynamic_cast<tree::TerminalNode *>(ctx))
-//     {
-//     }
-//     else if (auto *node = dynamic_cast<ParserRuleContext *>(ctx))
-//     {
-//     }
-// }

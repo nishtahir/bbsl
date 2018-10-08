@@ -1,0 +1,33 @@
+{
+    "startRule": [
+        {
+            "componentBody": [
+                {
+                    "functionDeclaration": [
+                        "function",
+                        {
+                            "untypedIdentifier": [
+                                "testFunction"
+                            ]
+                        },
+                        {
+                            "parameterList": [
+                                "(",
+                                ")"
+                            ]
+                        },
+                        "as",
+                        {
+                            "baseType": [
+                                "void"
+                            ]
+                        },
+                        "end",
+                        "function"
+                    ]
+                }
+            ]
+        },
+        "<EOF>"
+    ]
+}
