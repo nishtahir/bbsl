@@ -31,7 +31,7 @@ inline void to_lower(std::string &s)
 inline std::vector<std::string> split(std::string str, char delimiter)
 {
     std::vector<std::string> internal;
-    std::stringstream ss(str); // Turn the string into a stream.
+    std::stringstream ss(str);
     std::string tok;
 
     while (getline(ss, tok, delimiter))
@@ -54,21 +54,18 @@ inline void right_pad(std::string &str, const size_t num, const char paddingChar
     str.append(num, paddingChar);
 }
 
-// trim from left
 inline std::string &ltrim(std::string &s, const char *t = " \t\n\r\f\v")
 {
     s.erase(0, s.find_first_not_of(t));
     return s;
 }
 
-// trim from right
 inline std::string &rtrim(std::string &s, const char *t = " \t\n\r\f\v")
 {
     s.erase(s.find_last_not_of(t) + 1);
     return s;
 }
 
-// trim from left & right
 inline std::string &trim(std::string &s, const char *t = " \t\n\r\f\v")
 {
     return ltrim(rtrim(s, t), t);
