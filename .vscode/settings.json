@@ -44,6 +44,7 @@
         "Vagrantfile": "ruby",
         "iostream": "cpp",
         "istream": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "random": "cpp"
     }
 }

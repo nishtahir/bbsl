@@ -27,18 +27,29 @@ void parseFiles(vector<string> paths, bool print_parse_tree = false, bool report
         CommonTokenStream tokens(&lexer);
         BrightScriptParser parser(&tokens);
 
-        parser.removeErrorListeners();
+        antlr4::ParserRuleContext *tree;
 
-        if (report_errors)
+        try
         {
-            auto err_listener = TerminalErrorListener();
-            parser.addErrorListener(&err_listener);
-            parser.setErrorHandler(make_shared<TerminalErrorStrategy>());
+            parser.setErrorHandler(make_shared<BailErrorStrategy>());
+            auto interpreter = parser.getInterpreter<atn::ParserATNSimulator>();
+            interpreter->setPredictionMode(atn::PredictionMode::SLL);
+            tree = parser.startRule();
         }
+        catch (ParseCancellationException e)
+        {
+            if (report_errors)
+            {
+                parser.reset();
+                auto interpreter = parser.getInterpreter<atn::ParserATNSimulator>();
+                interpreter->setPredictionMode(atn::PredictionMode::LL);
 
-        auto interpreter = parser.getInterpreter<atn::ParserATNSimulator>();
-        // interpreter->setPredictionMode(atn::PredictionMode::SLL);
-        auto tree = parser.startRule();
+                auto err_listener = TerminalErrorListener();
+                parser.removeErrorListeners();
+                parser.addErrorListener(&err_listener);
+                parser.setErrorHandler(make_shared<TerminalErrorStrategy>());
+            }
+        }
 
         if (print_parse_tree)
         {
@@ -73,7 +84,6 @@ int main(int argc, char **argv)
         if (parse_result.count("sources"))
         {
             auto &files = parse_result["sources"].as<vector<string>>();
-            
             auto report_errors = !parse_result.count("no-lint");
             auto print_tree = parse_result.count("print-tree");
 

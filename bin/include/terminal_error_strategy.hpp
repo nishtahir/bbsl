@@ -1,5 +1,5 @@
-#ifndef __BSLINT_ERROR_STRATEGY_H__
-#define __BSLINT_ERROR_STRATEGY_H__
+#ifndef __TERMINAL_ERROR_STRATEGY_H__
+#define __TERMINAL_ERROR_STRATEGY_H__
 
 #include "DefaultErrorStrategy.h"
 #include "string_utils.hpp"

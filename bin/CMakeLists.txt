@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(bslint)
+project(bbsl)
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
   ${PROJECT_SOURCE_DIR}/lib
@@ -26,7 +26,7 @@ set(CMAKE_BINARY_DIR "${CMAKE_HOME_DIRECTORY}/dist")
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 message(STATUS "Outputing artifact to ${CMAKE_BINARY_DIR}")
 
-add_executable(bslint ${_HDRS} ${_SRCS})
-target_link_libraries(bslint antlr-runtime grammar)
+add_executable(bbsl ${_HDRS} ${_SRCS})
+target_link_libraries(bbsl antlr-runtime grammar)
 
-#install(TARGETS bslint DESTINATION bin)
+#install(TARGETS bbsl DESTINATION bin)
