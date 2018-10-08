@@ -2,7 +2,6 @@
 
 `bbsl` is an opinionated anti-bikeshedding linter for the BrightScript Programming Language. 
 
-
 # Philosophy
 Unlike `wist` which aims for full compliance with the Brightscript language specification, `bbsl` aims for speed and consistency over . While this means that `bbsl` will report valid Brightscript that does not conform to its ruleset as invalid, this does not make it incorrect; it makes it heavily opinionated on how you should write your code.
 
