@@ -45,6 +45,7 @@
         "iostream": "cpp",
         "istream": "cpp",
         "ostream": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "cerrno": "cpp"
     }
 }
