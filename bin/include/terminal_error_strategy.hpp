@@ -9,13 +9,6 @@ class TerminalErrorStrategy : public antlr4::DefaultErrorStrategy
 protected:
   void reportNoViableAlternative(antlr4::Parser *recognizer, const antlr4::NoViableAltException &e) override
   {
-    if (inErrorRecoveryMode(recognizer))
-    {
-      return;
-    }
-
-    beginErrorCondition(recognizer);
-
     auto offending_token = e.getOffendingToken();
     auto msg = "no viable alternative at input " + escapeWSAndQuote(e.getOffendingToken()->getText());
     recognizer->notifyErrorListeners(offending_token, msg, nullptr);
@@ -23,13 +16,6 @@ protected:
 
   void reportInputMismatch(antlr4::Parser *recognizer, const antlr4::InputMismatchException &e) override
   {
-    if (inErrorRecoveryMode(recognizer))
-    {
-      return;
-    }
-
-    beginErrorCondition(recognizer);
-
     auto tokens = e.getExpectedTokens().toList();
     std::string expected_tokens = create_token_list(recognizer, tokens);
 
@@ -40,13 +26,6 @@ protected:
 
   void reportUnwantedToken(antlr4::Parser *recognizer) override
   {
-    if (inErrorRecoveryMode(recognizer))
-    {
-      return;
-    }
-
-    beginErrorCondition(recognizer);
-
     antlr4::Token *t = recognizer->getCurrentToken();
     std::string token = getTokenErrorDisplay(t);
     auto expecting = getExpectedTokens(recognizer).toList();
@@ -57,13 +36,6 @@ protected:
 
   void reportMissingToken(antlr4::Parser *recognizer) override
   {
-    if (inErrorRecoveryMode(recognizer))
-    {
-      return;
-    }
-
-    beginErrorCondition(recognizer);
-
     antlr4::Token *t = recognizer->getCurrentToken();
     auto expecting = getExpectedTokens(recognizer).toList();
     std::string msg = "missing " + create_token_list(recognizer, expecting) + " at " + getTokenErrorDisplay(t);

@@ -18,6 +18,17 @@ Conforming to `bbsl` rules will ensure that your codebase is readable and consis
 
 * Code indentation should be done with 4 spaces
 
+# Usage
+
+```
+$ bbsl [OPTION...] <source files>
+
+  -v, --verbose      Show verbose output
+  -h, --help         Print help
+      --print-tree   Print parse tree
+      --no-lint      Disable error reporting
+      --sources arg  Source files
+```
 
 # FAQ
 

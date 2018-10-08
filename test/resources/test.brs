@@ -6,7 +6,7 @@ REM Although the file compiles,
 REM
 REM Not all linting rules pass
 
-sub DefaultMain(
+sub DefaultMain()
     #if debug = true
     print "debug mode enabled"
     #else
@@ -26,13 +26,13 @@ sub DefaultMain(
 
     stop
 
-    ? "some thing";"other thing"
+    print "some thing";"other thing"
 
     a = ["foo", "bar", "baz"]
 
     b = [
-        "foo"
-        "bar"
+        "foo",
+        "bar",
         "baz"
     ]
 
@@ -43,8 +43,8 @@ sub DefaultMain(
     }
 
     c = {
-        "foo": 1
-        "bar": 2
+        "foo": 1,
+        "bar": 2,
         "baz": 3
     }
 

@@ -41,13 +41,16 @@ void parseFiles(vector<string> paths, bool print_parse_tree = false, bool report
         {
             if (report_errors)
             {
+                tokens.reset();
                 parser.reset();
-                auto interpreter = parser.getInterpreter<atn::ParserATNSimulator>();
-                interpreter->setPredictionMode(atn::PredictionMode::LL);
 
                 auto err_listener = TerminalErrorListener();
                 parser.addErrorListener(&err_listener);
                 parser.setErrorHandler(make_shared<TerminalErrorStrategy>());
+
+                auto interpreter = parser.getInterpreter<atn::ParserATNSimulator>();
+                interpreter->setPredictionMode(atn::PredictionMode::LL);
+
                 tree = parser.startRule();
             }
         }
@@ -67,7 +70,7 @@ int main(int argc, char **argv)
         auto options_adder = options.add_options();
         options_adder("v,verbose", "Show verbose output", value<bool>());
         options_adder("h,help", "Print help");
-        options_adder("print-tree", "Print parse tree");
+        options_adder("print-tree", "Print parse tree as JSON");
         options_adder("no-lint", "Disable error reporting");
         options_adder("sources", "Source files", value<vector<string>>());
 

@@ -34,7 +34,7 @@ block
     ;
 
 assignmentStatmenet
-    : identifier EQUALS assignableExpression
+    : LET? identifier EQUALS assignableExpression
     ;
 
 arrayInitializer
@@ -73,8 +73,8 @@ conditionalCompilationIfElseBlockStatement
     ;
 
 conditionalCompilationBlock
-    : block
-    | componentBody
+    : componentBody
+    | block
     ;
 
 dimStatement
@@ -107,27 +107,6 @@ ifThenElseStatement
     : IF expression THEN? block* (ELSEIF block*)* (ELSE block)? END IF
     ;
 
-//ifThenElseStatement
-//    : ifSingleLineStatement
-//    | ifBlockStatement ifElseIfBlockStatement* ifElseBlockStatement? (END IF | ENDIF)
-//    ;
-
-ifSingleLineStatement
-    :
-    ;
-
-ifBlockStatement
-    : IF expression THEN? block*
-    ;
-
-ifElseIfBlockStatement
-    : (ELSE IF | ) expression THEN? block*
-    ;
-
-ifElseBlockStatement
-    : ELSE block
-    ;
-
 labelStatement
     : IDENTIFIER COLON
     ;
@@ -153,23 +132,23 @@ stopStatement
     ;
 
 whileStatement
-    : WHILE expression block* ENDWHILE
+    : WHILE expression block* (ENDWHILE | END WHILE)
     ;
 
 anonymousFunctionDeclaration
-    : FUNCTION parameterList? (AS baseType)? block* (ENDFUNCTION | END FUNCTION)
+    : FUNCTION parameterList (AS baseType)? block* (ENDFUNCTION | END FUNCTION)
     ;
 
 functionDeclaration
-    : FUNCTION untypedIdentifier parameterList? (AS baseType)? block* (ENDFUNCTION | END FUNCTION)
+    : FUNCTION untypedIdentifier parameterList (AS baseType)? block* (ENDFUNCTION | END FUNCTION)
     ;
 
 anonymousSubDeclaration
-    : SUB parameterList? block* (ENDSUB | END SUB)
+    : SUB parameterList block* (ENDSUB | END SUB)
     ;
 
 subDeclaration
-    : SUB untypedIdentifier parameterList? block* (ENDSUB | END SUB)
+    : SUB untypedIdentifier parameterList block* (ENDSUB | END SUB)
     ;
 
 parameterList
@@ -274,7 +253,6 @@ untypedIdentifier
 reservedWord
     : AND
     | BOX
-//    | CREATEOBJECT
     | DIM
     | EACH
     | ELSE
@@ -284,15 +262,11 @@ reservedWord
     | ENDIF
     | ENDSUB
     | ENDWHILE
-//    | EVAL
     | EXIT
     | EXITWHILE
     | FALSE
     | FOR
     | FUNCTION
-    | GETGLOBALAA
-    | GETLASTRUNCOMPILEERROR
-    | GETLASTRUNRUNTIMEERROR
     | GOTO
     | IF
     | INVALID
@@ -306,7 +280,6 @@ reservedWord
     | PRINT
     | REM
     | RETURN
-//    | RUN
     | STEP
     | STOP
     | SUB
@@ -314,7 +287,6 @@ reservedWord
     | THEN
     | TO
     | TRUE
-//    | TYPE
     | WHILE
     ;
 
@@ -332,10 +304,6 @@ BOOLEAN
 BOX
     : B O X
 	;
-
-//CREATEOBJECT
-//    : C R E A T E O B J E C T
-//    ;
 
 DIM
     : D I M
@@ -389,10 +357,6 @@ EXITWHILE
     : E X I T W H I L E
 	;
 
-//EVAL
-//    : E V A L
-//    ;
-
 FALSE
     : F A L S E
 	;
@@ -408,18 +372,6 @@ FOR
 FUNCTION
     : F U N C T I O N
 	;
-
-GETGLOBALAA
-    : G E T G L O B A L A A
-    ;
-
-GETLASTRUNCOMPILEERROR
-    : G E T L A S T R U N C O M P I L E E R R O R
-    ;
-
-GETLASTRUNRUNTIMEERROR
-    : G E T L A S T R U N R U N T I M E E R R O R
-    ;
 
 GOTO
     : G O T O
@@ -497,10 +449,6 @@ RETURN
     : R E T U R N
 	;
 
-//RUN
-//    : R U N
-//    ;
-
 STEP
     : S T E P
 	;
@@ -536,10 +484,6 @@ TRUE
 VOID
     : V O I D
     ;
-
-//TYPE
-//    : T Y P E
-//    ;
 
 WHILE
     : W H I L E
