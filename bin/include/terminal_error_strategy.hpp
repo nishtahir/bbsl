@@ -44,8 +44,7 @@ protected:
   }
 
 private:
-  std::string
-  create_token_list(antlr4::Parser *recognizer, std::vector<ssize_t> tokens)
+  std::string create_token_list(antlr4::Parser *recognizer, std::vector<ssize_t> tokens)
   {
     std::string expected_tokens;
     for (std::vector<ssize_t>::const_iterator item = tokens.begin(); item != tokens.end(); ++item)
@@ -60,7 +59,6 @@ private:
         expected_tokens += ", ";
       }
     }
-
     return expected_tokens;
   }
 };
