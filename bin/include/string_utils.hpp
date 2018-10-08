@@ -74,7 +74,7 @@ inline std::string &trim(std::string &s, const char *t = " \t\n\r\f\v")
     return ltrim(rtrim(s, t), t);
 }
 
-inline void replace(std::string &str, char ch1, char ch2)
+inline void replace_all(std::string &str, char ch1, char ch2)
 {
     for (size_t i = 0; i < str.length(); ++i)
     {
