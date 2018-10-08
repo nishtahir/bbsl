@@ -55,8 +55,25 @@ protected:
     recognizer->notifyErrorListeners(t, msg, nullptr);
   }
 
+  void reportMissingToken(antlr4::Parser *recognizer) override
+  {
+    if (inErrorRecoveryMode(recognizer))
+    {
+      return;
+    }
+
+    beginErrorCondition(recognizer);
+
+    antlr4::Token *t = recognizer->getCurrentToken();
+    auto expecting = getExpectedTokens(recognizer).toList();
+    std::string msg = "missing " + create_token_list(recognizer, expecting) + " at " + getTokenErrorDisplay(t);
+
+    recognizer->notifyErrorListeners(t, msg, nullptr);
+  }
+
 private:
-  std::string create_token_list(antlr4::Parser *recognizer, std::vector<ssize_t> tokens)
+  std::string
+  create_token_list(antlr4::Parser *recognizer, std::vector<ssize_t> tokens)
   {
     std::string expected_tokens;
     for (std::vector<ssize_t>::const_iterator item = tokens.begin(); item != tokens.end(); ++item)
