@@ -1,21 +1,25 @@
 dist: trusty
 sudo: required
 language: cpp
-compiler: clang
+compiler: 
+  - clang
+  - gcc
 matrix: 
   include:
     - os: linux
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-6.0
-            - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
-              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+            - openjdk-r
           packages:
-            - openjdk-8-jdk 
-            - build-essential 
-            - clang-6.0 
+            - g++-5
+            - cmake-data
             - cmake
+            - openjdk-8-jdk
+      env:
+         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-6.0"
     - os: osx
