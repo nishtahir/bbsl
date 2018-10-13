@@ -1,20 +1,24 @@
 dist: trusty
+sudo: required
 language: cpp
-compiler: clang
+compiler: 
+  - clang
 matrix: 
   include:
     - os: linux
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-5.0
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
           packages:
-            - clang-5.0
+            - g++-5
+            - cmake-data
+            - cmake
       env:
-        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-6.0"
     - os: osx
       osx_image: xcode8
 
 script: 
-  - cd ${TRAVIS_BUILD_DIR}
   - make -j5
