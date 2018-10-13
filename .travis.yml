@@ -16,5 +16,5 @@ matrix:
       osx_image: xcode8
 
 script: 
-  - cd ${TRAVIS_BUILD_DIR}
+  - ls -la
   - make -j5
