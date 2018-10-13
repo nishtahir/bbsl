@@ -7,19 +7,6 @@ compiler:
 matrix: 
   include:
     - os: linux
-      addons:
-        apt:
-          sources:
-            - george-edison55-precise-backports
-            - ubuntu-toolchain-r-test
-            - openjdk-r
-          packages:
-            - g++-5
-            - cmake-data
-            - cmake
-            - openjdk-8-jdk
-      env:
-         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-6.0"
     - os: osx
