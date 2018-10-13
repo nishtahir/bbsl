@@ -16,5 +16,4 @@ matrix:
       osx_image: xcode8
 
 script: 
-  - ls -la
   - make -j5
