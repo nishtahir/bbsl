@@ -3,6 +3,7 @@
 #include <string>
 #include <cerrno>
 #include <regex>
+#include <glob.h>
 
 #include "antlr4-runtime.h"
 #include "BrightScriptLexer.h"
@@ -19,11 +20,26 @@ using namespace antlr4;
 using namespace std;
 using namespace cxxopts;
 
-void parseFiles(vector<string> paths, bool print_parse_tree = false, bool report_errors = true)
+struct Config
 {
+    bool print_parse_tree;
+    bool verbose;
+    bool no_lint;
+};
+
+void parseFiles(vector<string> paths, Config &config)
+{
+
+    if (config.verbose)
+    {
+        for (const auto &path : paths)
+        {
+            cout << path << endl;
+        }
+    }
+
     for (const auto &path : paths)
     {
-
         if (!file_exists(path))
         {
             cerr << "File not found for '" + path + "'" << endl;
@@ -47,7 +63,7 @@ void parseFiles(vector<string> paths, bool print_parse_tree = false, bool report
         }
         catch (ParseCancellationException &)
         {
-            if (report_errors)
+            if (config.no_lint == false)
             {
                 tokens.reset();
                 parser.reset();
@@ -63,11 +79,33 @@ void parseFiles(vector<string> paths, bool print_parse_tree = false, bool report
             }
         }
 
-        if (print_parse_tree && tree != nullptr)
+        if (config.print_parse_tree && tree != nullptr)
         {
             std::cout << to_json(tree, &parser) << std::endl;
         }
     }
+}
+
+vector<string> expand_paths(vector<string> &glob_paths)
+{
+    glob_t globbuf;
+    vector<string> file_list = {};
+
+    for (auto pattern : glob_paths)
+    {
+        glob(pattern.c_str(), GLOB_TILDE, NULL, &globbuf);
+        for (size_t i = 0; i < globbuf.gl_pathc; ++i)
+        {
+            file_list.push_back(globbuf.gl_pathv[i]);
+        }
+    }
+
+    if (globbuf.gl_pathc > 0)
+    {
+        globfree(&globbuf);
+    }
+
+    return file_list;
 }
 
 int main(int argc, char **argv)
@@ -93,13 +131,16 @@ int main(int argc, char **argv)
             exit(0);
         }
 
+        Config conf;
+        conf.no_lint = parse_result.count("no-lint");
+        conf.print_parse_tree = parse_result.count("print-tree");
+        conf.verbose = parse_result.count("verbose");
+
         if (parse_result.count("sources"))
         {
-            auto &files = parse_result["sources"].as<vector<string>>();
-            auto report_errors = !parse_result.count("no-lint");
-            auto print_tree = parse_result.count("print-tree");
-
-            parseFiles(files, print_tree, report_errors);
+            auto glob_paths = parse_result["sources"].as<vector<string>>();
+            auto file_list = expand_paths(glob_paths);
+            parseFiles(file_list, conf);
         }
         else
         {

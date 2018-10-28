@@ -104,7 +104,7 @@ gotoStatement
     ;
 
 ifThenElseStatement
-    : IF expression THEN? block* (ELSEIF block*)* (ELSE block)? END IF
+    : IF expression THEN? block* (ELSEIF block*)* (ELSE block*)? END IF
     ;
 
 labelStatement

@@ -20,7 +20,7 @@ class TerminalErrorListener : public antlr4::BaseErrorListener
                              size_t line,
                              size_t charPositionInLine,
                              const std::string &msg,
-                             std::exception_ptr e)
+                             std::exception_ptr /* e */)
     {
 
         auto input_stream = recognizer->getInputStream();

@@ -10,10 +10,7 @@ inline bool file_exists(const std::string &path)
         fclose(file);
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 #endif

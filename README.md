@@ -1,5 +1,9 @@
 # bbsl
 
+[![Travis (.org)](https://img.shields.io/travis/nishtahir/bbsl.svg?style=flat-square)](https://travis-ci.org/nishtahir/bbsl/)
+
+
+
 `bbsl` is an opinionated anti-bikeshedding linter for the BrightScript Programming Language. 
 
 # Philosophy
@@ -29,6 +33,43 @@ $ bbsl [OPTION...] <source files>
       --sources arg  Source files
 ```
 
+To lint your project, you need to invoke `bbsl` on your source files. 
+
+```
+$ bbsl my/path/MyFile.brs my/path/MySecondFile.brs
+```
+
+`bbsl` also supports the glob file pattern for passing in multiple sources
+
+```
+$ bbsl my/path/*.brs
+```
+
+You can get verbose output using the `-v` flag. This will log the files that it finds 
+before it begins linting
+
+```
+$ bbsl -v my/path/*.brs
+my/path/MyFile.brs 
+my/path/MySecondFile.brs
+```
+
+# Building
+
+In order to build the project you need the following installed
+
+* OpenJDK 8
+* CMake 3.5 or higher
+* Clang
+
+A `Vagrantfile` has been provided with a properly configured linux environment as an alternative.
+
+To build the project, you simply need to invoke the `make` command in the root directory. You may optionally use the `-j` flag to parallelize the build.
+
+```
+$ make -j5
+```
+
 # FAQ
 
 * **Why should I use `bbsl`?**
@@ -39,17 +80,23 @@ Simplicity, safety and reliablity. You can rest easy knowing that the code you u
 
 Better Brightscript linter.
 
-# Development
 
-## Requirements
-
-* OpenJDK 8
-* CMake 3.5 or higher
-* Clang
-
-To build the project, you simply need to invoke the `make` command in the root directory. You may optionally use the `-j` flag to parallelize the build.
+# License
 
 ```
-$ make -j5
+   Copyright 2018 Nish Tahir Inc.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
 ```
 
