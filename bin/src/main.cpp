@@ -36,7 +36,12 @@ struct Config
     bool print_parse_tree;
     bool verbose;
     bool no_lint;
+    bool full_grammar;
 };
+
+extern "C" vector<string> parseFile(string content) {
+    
+}
 
 void parseFiles(vector<string> paths, Config &config)
 {
@@ -142,6 +147,7 @@ int main(int argc, char **argv)
         options_adder("h,help", "Print help");
         options_adder("print-tree", "Print parse tree as JSON");
         options_adder("no-lint", "Disable error reporting");
+        options_adder("full-grammar", "Lint against the full Brightscript Language specification");
         options_adder("sources", "Source files", value<vector<string>>());
 
         options.parse_positional("sources");
@@ -159,6 +165,7 @@ int main(int argc, char **argv)
         conf.no_lint = parse_result.count("no-lint");
         conf.print_parse_tree = parse_result.count("print-tree");
         conf.verbose = parse_result.count("verbose");
+        conf.full_grammar = parse_result.count("full-grammar");
 
         if (parse_result.count("sources"))
         {
