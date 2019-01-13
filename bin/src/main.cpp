@@ -1,3 +1,14 @@
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#define ENV_EMSCRIPEN
+/*
+reference https://code.woboq.org/userspace/glibc/posix/glob.h.html#_M/GLOB_TILDE
+ */
+#define GLOB_TILDE (1 << 12)
+#else
+#define ENV_UNIX
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -88,6 +99,9 @@ void parseFiles(vector<string> paths, Config &config)
 
 vector<string> expand_paths(vector<string> &glob_paths)
 {
+#if defined(ENV_EMSCRIPEN)
+    chdir("/working");
+#endif
     glob_t globbuf;
     vector<string> file_list = {};
 
@@ -108,8 +122,18 @@ vector<string> expand_paths(vector<string> &glob_paths)
     return file_list;
 }
 
+void setup_file_system()
+{
+#if defined(ENV_EMSCRIPEN)
+    EM_ASM(
+        FS.mkdir('/working');
+        FS.mount(NODEFS, {root : '.'}, '/working'););
+#endif
+}
+
 int main(int argc, char **argv)
 {
+    setup_file_system();
     try
     {
         Options options(argv[0]);
